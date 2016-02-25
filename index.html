@@ -115,8 +115,13 @@
 			}
 
 			function add() {
+                var monsterInitiative = localStorage.getItem('monsterInitiative') || config.DefaultInitiative;
 				addIndex++;
-				initiative.add({name:"Extra " + addIndex, i:roll(), enemy : true});
+				initiative.add({
+                    name:"Extra " + addIndex,
+                    i:roll(parseInt(monsterInitiative)),
+                    enemy : true
+                });
 				updateView();
 			}
 
