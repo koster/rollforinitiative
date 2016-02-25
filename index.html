@@ -28,7 +28,7 @@
 
 			hr {
 				border: dashed;
-				border-color: rgba(255, 125, 0, 0.1);
+				border-color: rgb(255, 247, 0);
 			}
 
 			#initiative {
@@ -59,11 +59,12 @@
 
 		<script type="text/javascript">
 			var initiative = newInitiativeTable();
+            var defaultInitiative = 5;
 
-			initiative.add({name:"Gilian", 	 i:roll()});
-			initiative.add({name:"Turandil", i:roll()});
-			initiative.add({name:"Targor",   i:roll()});
-			initiative.add({name:"Balakzar", i:roll()});
+			initiative.add({name:"Gilian", 	 i:roll(6)});
+			initiative.add({name:"Thurandil", i:roll(5)});
+			initiative.add({name:"Targor",   i:roll(1)});
+			initiative.add({name:"Brakzar", i:roll(3)});
 			initiative.add({name:"Enemy",    i:roll(), enemy : true});
 
 			var presenter = newInitiativePresenter();
@@ -79,7 +80,7 @@
 				var players = presentation.players;
 
 				html += "<table>";
-				for (var i = 0; i < players.length; i++) 
+				for (var i = 0; i < players.length; i++)
 					html += generatePlayerHtml(players[i], i == 0);
 				html += "</table>";
 
@@ -113,8 +114,12 @@
 				updateView();
 			}
 
-			function roll() {
-				return Math.max(1, Math.round(Math.random() * 20));
+			function roll(bonus) {
+                if (typeof bonus === 'undefined') {
+                    bonus = defaultInitiative;
+                }
+
+				return Math.max(1, Math.round(Math.random() * 20)) + bonus;
 			}
 		</script>
 	</head>
