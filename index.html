@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<link rel="icon" type="image/png" href="favicon.png">
 		<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="src/style.css">
 
 		<title>ROLL FOR INITIATIVE</title>
 
@@ -11,67 +12,74 @@
 		<script type="text/javascript" src="src/initiative.js?raw=1"></script>
 		<script type="text/javascript" src="src/initiativePresenter.js?raw=1"></script>
 
-		<style type="text/css">
-			body {
-				font-size: 50pt;
-				text-align: center;
-				padding-top: 50px;
-				font-family: 'Open Sans', sans-serif;
-
-				background-color: #111;
-			}
-
-			button {
-				font-size: 80pt;
-				padding: 15pt;
-				border: none;
-			}
-
-			hr {
-				border: dashed;
-				border-color: rgba(255, 125, 0, 0.1);
-			}
-
-			#initiative {
-				width: 80%;
-				height: 100%;
-			}
-
-			#initiative td {
-				padding: 5px;
-			}
-
-			#initiative .enemy {
-				color: red;
-			}
-
-			#initiative .player {
-				color: green;
-			}
-
-			#initiative .name {
-				width: 100%;
-			}
-
-			#initiative .first {
-				background-color: rgb(255, 247, 0);
-			}
-		</style>
-
 		<script type="text/javascript">
             var config = window.Config;
             var players = config.PlayersData;
-			var initiative = newInitiativeTable();
+			var presenter = newInitiativePresenter();
+			var addIndex = 0;
+			var initiative;
+            updateInitiativeData();
 
-            for (var i = 0; i < players.length; i++) {
-                initiative.add({
-                    name: players[i].name,
-                    i: roll(players[i].bonus),
-                    enemy: players[i].enemy
-                });
+            function onLoad() {
+                updateView();
+                addEvents();
+                setActiveMonsterInitiative();
             }
 
-			var presenter = newInitiativePresenter();
+            function addEvents() {
+                var monsterInitiativeButtons = document.getElementsByName('monsterInitiativeButton');
+
+                for (var i = 0; i < monsterInitiativeButtons.length; i++) {
+                    monsterInitiativeButtons[i].addEventListener("click", onMonsterInitiativeClick);
+                }
+            }
+
+            function onMonsterInitiativeClick(event) {
+                var target = event.target || event.srcElement;
+                var button = target.tagName === 'SPAN' ? target.parentElement : target;
+                var initiativeBonus = button.getAttribute('id') || config.DefaultInitiative;
+                setActiveMonsterInitiative(button);
+                storeCurrentMonsterInitiative(initiativeBonus);
+                updateInitiativeData();
+                updateView();
+            }
+
+            function setActiveMonsterInitiative(button) {
+                var allButtons = document.getElementsByName('monsterInitiativeButton');
+                var currentInitiative = localStorage.getItem('monsterInitiative') || config.DefaultInitiative;
+
+                if (typeof button === 'undefined') {
+                    button = document.getElementById(currentInitiative);
+                }
+
+                for (var i = 0; i < allButtons.length; i++) {
+                    allButtons[i].className = 'monsterInitiativeBar__item';
+                }
+
+                button.className = 'monsterInitiativeBar__item monsterInitiativeBar__item--active';
+            }
+
+            function storeCurrentMonsterInitiative(bonus) {
+                localStorage.setItem('monsterInitiative', bonus);
+            }
+
+            function updateInitiativeData() {
+                var monsterInitiative = localStorage.getItem('monsterInitiative') || config.DefaultInitiative;
+                initiative = newInitiativeTable();
+
+                for (var i = 0; i < players.length; i++) {
+                    initiative.add({
+                        name: players[i].name,
+                        i: roll(players[i].bonus)
+                    });
+                }
+
+                initiative.add({
+                    name: 'Enemy',
+                    i: roll(parseInt(monsterInitiative)),
+                    enemy: true
+                });
+            }
 
 			function updateView() {
 				var cont = document.getElementById("initiative");
@@ -106,7 +114,6 @@
 				return html + "<tr>";
 			}
 
-			addIndex = 0;
 			function add() {
 				addIndex++;
 				initiative.add({name:"Extra " + addIndex, i:roll(), enemy : true});
@@ -128,11 +135,51 @@
 		</script>
 	</head>
 
-	<body onload="updateView()">
-		<center><div id="initiative"></div></center>
+	<body onload="onLoad()">
+		<center>
+            <div id="initiative"></div>
+        </center>
 		<br/>
 		<button onclick="next()">NEXT</button>
 		<hr/>
+        <div class="monsterInitiativeBar">
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="1">
+                <span>+1</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="2">
+                <span>+2</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="3">
+                <span>+3</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="4">
+                <span>+4</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="5">
+                <span>+5</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="6">
+                <span>+6</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="7">
+                <span>+7</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="8">
+                <span>+8</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="9">
+                <span>+9</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="10">
+                <span>+10</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="11">
+                <span>+11</span>
+            </div>
+            <div class="monsterInitiativeBar__item" name="monsterInitiativeButton" id="12">
+                <span>+12</span>
+            </div>
+        </div>
 		<button onclick="add()">ADD</button>
 	</body>
 </html>
