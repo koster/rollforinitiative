@@ -7,6 +7,7 @@
 
 		<title>ROLL FOR INITIATIVE</title>
 
+        <script type="text/javascript" src="src/config.js?raw=1"></script>
 		<script type="text/javascript" src="src/initiative.js?raw=1"></script>
 		<script type="text/javascript" src="src/initiativePresenter.js?raw=1"></script>
 
@@ -28,7 +29,7 @@
 
 			hr {
 				border: dashed;
-				border-color: rgb(255, 247, 0);
+				border-color: rgba(255, 125, 0, 0.1);
 			}
 
 			#initiative {
@@ -53,19 +54,22 @@
 			}
 
 			#initiative .first {
-				background-color: rgba(255, 125, 0, 0.1);
+				background-color: rgb(255, 247, 0);
 			}
 		</style>
 
 		<script type="text/javascript">
+            var config = window.Config;
+            var players = config.PlayersData;
 			var initiative = newInitiativeTable();
-            var defaultInitiative = 5;
 
-			initiative.add({name:"Gilian", 	 i:roll(6)});
-			initiative.add({name:"Thurandil", i:roll(5)});
-			initiative.add({name:"Targor",   i:roll(1)});
-			initiative.add({name:"Brakzar", i:roll(3)});
-			initiative.add({name:"Enemy",    i:roll(), enemy : true});
+            for (var i = 0; i < players.length; i++) {
+                initiative.add({
+                    name: players[i].name,
+                    i: roll(players[i].bonus),
+                    enemy: players[i].enemy
+                });
+            }
 
 			var presenter = newInitiativePresenter();
 
@@ -116,7 +120,7 @@
 
 			function roll(bonus) {
                 if (typeof bonus === 'undefined') {
-                    bonus = defaultInitiative;
+                    bonus = config.DefaultInitiative;
                 }
 
 				return Math.max(1, Math.round(Math.random() * 20)) + bonus;
